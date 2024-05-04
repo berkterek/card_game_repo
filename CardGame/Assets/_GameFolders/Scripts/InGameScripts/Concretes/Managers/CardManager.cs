@@ -16,6 +16,8 @@ namespace CardGame.Managers
 {
     public class CardManager : MonoBehaviour, ICardService
     {
+        public const string CARD_MANAGER_KEY = "card_manager_key";
+
         [SerializeField] CardController _prefab;
         [SerializeField] DeckValue[] _decks;
         [SerializeField] int _xLoopCount = 4;
@@ -29,17 +31,23 @@ namespace CardGame.Managers
         Queue<CardController> _firstCardControllers;
         int _currentCombo;
         ISoundService _soundService;
-        
+        IGameService _gameService;
+        ISaveLoadService _saveLoadService;
+        DeckName _tempDeck;
+
         public event System.Action<int> OnSuccessMatching;
         public event System.Action<int> OnPlayerPlayCount;
         public event System.Action OnGameOvered;
 
         [Zenject.Inject]
-        void Constructor(ISoundService soundService)
+        void Constructor(ISoundService soundService, IGameService gameService, ISaveLoadService saveLoadService)
         {
             _soundService = soundService;
+            _gameService = gameService;
+            _saveLoadService = saveLoadService;
+            _gameService.OnReturnMenu += HandleOnReturnMenu;
         }
-        
+
         void Awake()
         {
             _firstCardControllers = new Queue<CardController>();
@@ -55,20 +63,22 @@ namespace CardGame.Managers
             _cards = new List<CardController>(maxCount);
 
             int randomDeck = Random.Range(0, (int)DeckName.Deck3 + 1);
-            var deckValue = _decks.FirstOrDefault(x => (int)x.DeckName == randomDeck);
+            _tempDeck = (DeckName)randomDeck;
+            var deckValue = _decks.FirstOrDefault(x => x.DeckName == _tempDeck);
             if (deckValue == null)
             {
                 deckValue = _decks.FirstOrDefault(x => x.DeckName == DeckName.Deck1);
+                _tempDeck = DeckName.Deck1;
             }
 
             var dataContainers1 = deckValue.GetCardDataContainers(maxCount / 2);
             var dataContainers2 = dataContainers1.ToArray();
 
-            List<ICardDataContainer> allDataContainer = new List<ICardDataContainer>();
-            AddList(dataContainers1, allDataContainer);
-            AddList(dataContainers2, allDataContainer);
-            
-            allDataContainer.Shuffle();
+            List<ICardDataContainer> allDataContainers = new List<ICardDataContainer>();
+            AddList(dataContainers1, allDataContainers);
+            AddList(dataContainers2, allDataContainers);
+
+            allDataContainers.Shuffle();
 
             int index = 0;
             for (int i = 0; i < _xLoopCount; i++)
@@ -77,10 +87,46 @@ namespace CardGame.Managers
                 {
                     var cardController = Instantiate(_prefab, transform);
                     cardController.Transform.localPosition = new Vector3(i * _xOffset, j * _yOffset, 0);
-                    cardController.SetDataContainer(allDataContainer[index]);
+                    cardController.SetDataContainer(allDataContainers[index]);
                     _cards.Add(cardController);
                     index++;
                 }
+            }
+        }
+
+        public void LoadLastGameCards()
+        {
+            if (!_saveLoadService.HasKeyAvailable(CARD_MANAGER_KEY)) return;
+
+            var model = _saveLoadService.LoadDataProcess<DeckDataModel>(CARD_MANAGER_KEY);
+
+            _playerPlayCount = model.PlayerPlayCount;
+            OnPlayerPlayCount?.Invoke(_playerPlayCount);
+            _currentCombo = model.CurrentCombo;
+
+            CleanCards();
+
+            int maxCount = _xLoopCount * _yLoopCount;
+            _cards = new List<CardController>(maxCount);
+
+
+            _tempDeck = model.DeckName;
+            var deckValue = _decks.FirstOrDefault(x => x.DeckName == _tempDeck);
+
+            List<ICardDataContainer> loadedList = new List<ICardDataContainer>();
+
+            for (int i = 0; i < model.CardDataModels.Count; i++)
+            {
+                loadedList.Add(deckValue.GetDataContainerByType(model.CardDataModels[i].CardType));
+            }
+
+            for (int i = 0; i < loadedList.Count; i++)
+            {
+                var cardController = Instantiate(_prefab, transform);
+                cardController.Transform.localPosition = new Vector3(model.CardDataModels[i].XPosition,
+                    model.CardDataModels[i].YPosition, 0f);
+                cardController.SetDataContainer(loadedList[i]);
+                _cards.Add(cardController);
             }
         }
 
@@ -151,9 +197,37 @@ namespace CardGame.Managers
 
                 if (_cards.Count <= 0)
                 {
+                    if (_saveLoadService.HasKeyAvailable(CARD_MANAGER_KEY))
+                    {
+                        _saveLoadService.DeleteData(CARD_MANAGER_KEY);
+                    }
+
                     _soundService.Play(SoundType.Finished);
                     OnGameOvered?.Invoke();
                 }
+            }
+        }
+
+        void HandleOnReturnMenu()
+        {
+            if (_cards.Count > 0)
+            {
+                DeckDataModel model = new DeckDataModel();
+                model.DeckName = _tempDeck;
+                model.CurrentCombo = _currentCombo;
+                model.PlayerPlayCount = _playerPlayCount;
+                model.CardDataModels = new List<CardDataModel>();
+                foreach (CardController cardController in _cards)
+                {
+                    model.CardDataModels.Add(new CardDataModel()
+                    {
+                        CardType = cardController.CardDataContainer.CardType,
+                        XPosition = cardController.Transform.localPosition.x,
+                        YPosition = cardController.Transform.localPosition.y
+                    });
+                }
+
+                _saveLoadService.SaveDataProcess(CARD_MANAGER_KEY, model);
             }
         }
     }
@@ -190,5 +264,25 @@ namespace CardGame.Managers
 
             return tempList.ToArray();
         }
+
+        public ICardDataContainer GetDataContainerByType(CardType cardType)
+        {
+            return _cardDataContainers.FirstOrDefault(x => x.CardType == cardType);
+        }
+    }
+
+    public class DeckDataModel
+    {
+        public DeckName DeckName;
+        public int PlayerPlayCount;
+        public int CurrentCombo;
+        public List<CardDataModel> CardDataModels;
+    }
+
+    public class CardDataModel
+    {
+        public float XPosition;
+        public float YPosition;
+        public CardType CardType;
     }
 }

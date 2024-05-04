@@ -17,6 +17,6 @@ namespace CardGame.Uis
         {
             _gameService.GameStart();
         }
-    }    
+    }
 }
 

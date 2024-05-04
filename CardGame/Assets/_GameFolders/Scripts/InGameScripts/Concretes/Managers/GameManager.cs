@@ -51,6 +51,16 @@ namespace CardGame.Managers
             await _cardService.FlipAllCard();
             _playerController.PlayerCanPlay();
         }
+        
+        [Button]
+        public async void LoadLastGame()
+        {
+            OnGameStarted?.Invoke();
+            _cardService.LoadLastGameCards();
+            await UniTask.Delay(_delayMillisecond);
+            await _cardService.FlipAllCard();
+            _playerController.PlayerCanPlay();
+        }
 
         public void ReturnMenu()
         {

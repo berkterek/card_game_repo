@@ -7,5 +7,6 @@ namespace CardGame.Abstracts.Managers
         event System.Action OnReturnMenu;
         void GameStart();
         void ReturnMenu();
+        void LoadLastGame();
     }
 }

@@ -11,5 +11,6 @@ namespace CardGame.Abstracts.Managers
         event System.Action<int> OnSuccessMatching;
         event System.Action<int> OnPlayerPlayCount;
         event System.Action OnGameOvered;
+        void LoadLastGameCards();
     }
 }
