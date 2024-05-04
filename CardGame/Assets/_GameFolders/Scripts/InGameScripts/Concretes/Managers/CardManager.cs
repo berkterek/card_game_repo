@@ -23,14 +23,16 @@ namespace CardGame.Managers
         [SerializeField] float _xOffset;
         [SerializeField] float _yOffset;
         [SerializeField] int _playerPlayCount;
+        [SerializeField] int _comboStart = 1;
         [SerializeField, ReadOnly] List<CardController> _cards;
 
+        Queue<CardController> _firstCardControllers;
+        int _currentCombo;
+        
         public event System.Action<int> OnSuccessMatching;
         public event System.Action<int> OnPlayerPlayCount;
         public event System.Action OnGameOvered;
- 
-        Queue<CardController> _firstCardControllers;
-
+        
         void Awake()
         {
             CreateCards();
@@ -40,6 +42,7 @@ namespace CardGame.Managers
         void Start()
         {
             _playerPlayCount = 0;
+            _currentCombo = _comboStart;
         }
 
         [Button]
@@ -124,16 +127,17 @@ namespace CardGame.Managers
                     _cards.Remove(firstCard);
                     _cards.Remove(secondCardController);
                     await UniTask.Delay(1000);
-                    OnSuccessMatching?.Invoke(firstCard.CardDataContainer.CardScore);
+                    OnSuccessMatching?.Invoke(firstCard.CardDataContainer.CardScore * _currentCombo);
                     Destroy(firstCard.gameObject);
                     Destroy(secondCardController.gameObject);
-                    
+                    _currentCombo++;
                 }
                 else
                 {
                     await UniTask.Delay(1000);
                     firstCard.RotateCard();
                     secondCardController.RotateCard();
+                    _currentCombo = _comboStart;
                 }
 
                 _playerPlayCount++;
