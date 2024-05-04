@@ -54,13 +54,13 @@ namespace CardGame.Managers
             if (_bestScore < _playerController.CurrentScore)
             {
                 _bestScore = _playerController.CurrentScore;
-                _currentScore = _playerController.CurrentScore;
                 _saveLoadService.SaveDataProcess(SAVE_LOAD_KEY, new GameManagerSaveModel()
                 {
                     BestScore = _bestScore
                 });
             }
             
+            _currentScore = _playerController.CurrentScore;
             _playerController.PlayerCantPlay();
             
             OnGameEnded?.Invoke(_currentScore, _bestScore);
