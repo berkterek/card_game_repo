@@ -148,12 +148,6 @@ namespace CardGame.Managers
         }
     }
 
-    public struct CardHolder
-    {
-        public CardController CardController1;
-        public CardController CardController2;
-    }
-
     [System.Serializable]
     public class DeckValue
     {
