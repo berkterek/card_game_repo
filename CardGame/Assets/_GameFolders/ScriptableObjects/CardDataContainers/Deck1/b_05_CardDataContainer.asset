@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: b_05_CardDataContainer
   m_EditorClassIdentifier: 
   _cardType: 4
-  _cardSprite: {fileID: 21300000, guid: 8fd8de2789a4d534983eaa4cdc89a90f, type: 3}
   _cardScore: 1
+  _cardStats: {fileID: 11400000, guid: 21b7958a954bd4027894d8c55f1ccddd, type: 2}
+  _cardSprite: {fileID: 21300000, guid: 8fd8de2789a4d534983eaa4cdc89a90f, type: 3}
