@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using CardGame.Abstracts.Controllers;
@@ -28,6 +27,7 @@ namespace CardGame.Managers
 
         public event System.Action<int> OnSuccessMatching;
         public event System.Action<int> OnPlayerPlayCount;
+        public event System.Action OnGameOvered;
  
         Queue<CardController> _firstCardControllers;
 
@@ -138,6 +138,8 @@ namespace CardGame.Managers
 
                 _playerPlayCount++;
                 OnPlayerPlayCount?.Invoke(_playerPlayCount);
+                
+                if(_cards.Count <= 0) OnGameOvered?.Invoke();
             }
         }
     }

@@ -16,6 +16,7 @@ namespace CardGame.Controllers
         public IWorldPositionHandler WorldPositionHandler { get; set; }
         public IInputReader InputReader { get; set; }
         public Camera Camera { get; private set; }
+        public int CurrentScore => _totalScore;
         public event System.Action<int> OnSuccessMatching;
 
         [Zenject.Inject]
@@ -50,6 +51,11 @@ namespace CardGame.Controllers
         public void PlayerCanPlay()
         {
             _canPlay = true;
+        }
+        
+        public void PlayerCantPlay()
+        {
+            _canPlay = false;
         }
         
         void HandleOnSuccessMatching(int score)

@@ -9,5 +9,6 @@ namespace CardGame.Abstracts.Managers
         void MatchCards(ICardController cardController);
         event System.Action<int> OnSuccessMatching;
         event System.Action<int> OnPlayerPlayCount;
+        event System.Action OnGameOvered;
     }
 }

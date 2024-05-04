@@ -9,8 +9,10 @@ namespace CardGame.Abstracts.Controllers
         IWorldPositionHandler WorldPositionHandler { get; set; }
         IInputReader InputReader { get; set; }
         Camera Camera { get; }
+        int CurrentScore { get; }
         event System.Action<int> OnSuccessMatching;
         void Update();
         void PlayerCanPlay();
+        void PlayerCantPlay();
     }
 }
