@@ -1,0 +1,9 @@
+{
+    "name": "InGameEditTests",
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ]
+}
