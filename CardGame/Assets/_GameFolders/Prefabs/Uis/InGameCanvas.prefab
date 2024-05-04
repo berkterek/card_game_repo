@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 96559190}
   - component: {fileID: 96559189}
   m_Layer: 0
-  m_Name: TitleText (1)
+  m_Name: CurrentValueText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1609,7 +1609,7 @@ GameObject:
   - component: {fileID: 1704464869}
   - component: {fileID: 1704464868}
   m_Layer: 0
-  m_Name: TitleText (1)
+  m_Name: BestValueText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1742,6 +1742,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1754562115}
   - component: {fileID: 1754562116}
+  - component: {fileID: 8380027098035506782}
   m_Layer: 0
   m_Name: GameOverPanel
   m_TagString: Untagged
@@ -1786,6 +1787,21 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!114 &8380027098035506782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1754562114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f2b0cce814724ec6b95e543cd011562, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _canvasGroup: {fileID: 1754562116}
+  _bestScoreText: {fileID: 1704464868}
+  _currentScoreText: {fileID: 96559189}
 --- !u!1 &1809135354
 GameObject:
   m_ObjectHideFlags: 0

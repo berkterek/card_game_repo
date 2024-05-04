@@ -26,6 +26,11 @@ namespace CardGame.Managers
             _cardService.OnGameOvered += HandleOnGameOvered;
         }
 
+        void OnDisable()
+        {
+            _cardService.OnGameOvered -= HandleOnGameOvered;
+        }
+
         [Button]
         public async void GameStart()
         {
@@ -41,6 +46,8 @@ namespace CardGame.Managers
                 _bestScore = _playerController.CurrentScore;
                 _currentScore = _playerController.CurrentScore;
             }
+            
+            _playerController.PlayerCantPlay();
             
             OnGameEnded?.Invoke(_currentScore, _bestScore);
         }
