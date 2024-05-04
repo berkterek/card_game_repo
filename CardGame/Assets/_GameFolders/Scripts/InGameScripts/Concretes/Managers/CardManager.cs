@@ -33,6 +33,7 @@ namespace CardGame.Managers
         ISoundService _soundService;
         IGameService _gameService;
         ISaveLoadService _saveLoadService;
+        IPlayerController _playerController;
         DeckName _tempDeck;
 
         public event System.Action<int> OnSuccessMatching;
@@ -40,11 +41,12 @@ namespace CardGame.Managers
         public event System.Action OnGameOvered;
 
         [Zenject.Inject]
-        void Constructor(ISoundService soundService, IGameService gameService, ISaveLoadService saveLoadService)
+        void Constructor(ISoundService soundService, IGameService gameService, ISaveLoadService saveLoadService, IPlayerController playerController)
         {
             _soundService = soundService;
             _gameService = gameService;
             _saveLoadService = saveLoadService;
+            _playerController = playerController;
             _gameService.OnReturnMenu += HandleOnReturnMenu;
         }
 
@@ -58,6 +60,7 @@ namespace CardGame.Managers
         {
             _playerPlayCount = 0;
             _currentCombo = _comboStart;
+            _playerController.ResetTotalValue();
             CleanCards();
             int maxCount = _xLoopCount * _yLoopCount;
             _cards = new List<CardController>(maxCount);
@@ -94,7 +97,7 @@ namespace CardGame.Managers
             }
         }
 
-        public void LoadLastGameCards()
+        public async void LoadLastGameCards()
         {
             if (!_saveLoadService.HasKeyAvailable(CARD_MANAGER_KEY)) return;
 
@@ -103,6 +106,9 @@ namespace CardGame.Managers
             _playerPlayCount = model.PlayerPlayCount;
             OnPlayerPlayCount?.Invoke(_playerPlayCount);
             _currentCombo = model.CurrentCombo;
+            _playerController.ResetTotalValue();
+            var score = model.CurrentScore;
+            OnSuccessMatching?.Invoke(score);
 
             CleanCards();
 
@@ -216,6 +222,7 @@ namespace CardGame.Managers
                 model.DeckName = _tempDeck;
                 model.CurrentCombo = _currentCombo;
                 model.PlayerPlayCount = _playerPlayCount;
+                model.CurrentScore = _playerController.CurrentScore;
                 model.CardDataModels = new List<CardDataModel>();
                 foreach (CardController cardController in _cards)
                 {
@@ -223,7 +230,7 @@ namespace CardGame.Managers
                     {
                         CardType = cardController.CardDataContainer.CardType,
                         XPosition = cardController.Transform.localPosition.x,
-                        YPosition = cardController.Transform.localPosition.y
+                        YPosition = cardController.Transform.localPosition.y,
                     });
                 }
 
@@ -276,6 +283,7 @@ namespace CardGame.Managers
         public DeckName DeckName;
         public int PlayerPlayCount;
         public int CurrentCombo;
+        public int CurrentScore;
         public List<CardDataModel> CardDataModels;
     }
 

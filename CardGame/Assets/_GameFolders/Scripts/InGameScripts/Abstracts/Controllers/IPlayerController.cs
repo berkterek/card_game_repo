@@ -14,5 +14,6 @@ namespace CardGame.Abstracts.Controllers
         void Update();
         void PlayerCanPlay();
         void PlayerCantPlay();
+        void ResetTotalValue();
     }
 }
