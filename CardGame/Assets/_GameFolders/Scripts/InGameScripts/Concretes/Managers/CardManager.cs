@@ -28,10 +28,17 @@ namespace CardGame.Managers
 
         Queue<CardController> _firstCardControllers;
         int _currentCombo;
+        ISoundService _soundService;
         
         public event System.Action<int> OnSuccessMatching;
         public event System.Action<int> OnPlayerPlayCount;
         public event System.Action OnGameOvered;
+
+        [Zenject.Inject]
+        void Constructor(ISoundService soundService)
+        {
+            _soundService = soundService;
+        }
         
         void Awake()
         {
@@ -110,11 +117,13 @@ namespace CardGame.Managers
             {
                 _firstCardControllers.Enqueue(cardController as CardController);
                 cardController.RotateCard();
+                _soundService.Play(SoundType.Flip);
             }
             else
             {
                 var secondCardController = cardController as CardController;
                 secondCardController.RotateCard();
+                _soundService.Play(SoundType.Flip);
                 var firstCard = _firstCardControllers.Dequeue();
 
                 if (firstCard.CardDataContainer.CardType == secondCardController.CardDataContainer.CardType)
@@ -126,6 +135,7 @@ namespace CardGame.Managers
                     Destroy(firstCard.gameObject);
                     Destroy(secondCardController.gameObject);
                     _currentCombo++;
+                    _soundService.Play(SoundType.Success);
                 }
                 else
                 {
@@ -133,12 +143,17 @@ namespace CardGame.Managers
                     firstCard.RotateCard();
                     secondCardController.RotateCard();
                     _currentCombo = _comboStart;
+                    _soundService.Play(SoundType.Failed);
                 }
 
                 _playerPlayCount++;
                 OnPlayerPlayCount?.Invoke(_playerPlayCount);
-                
-                if(_cards.Count <= 0) OnGameOvered?.Invoke();
+
+                if (_cards.Count <= 0)
+                {
+                    _soundService.Play(SoundType.Finished);
+                    OnGameOvered?.Invoke();
+                }
             }
         }
     }
