@@ -35,19 +35,14 @@ namespace CardGame.Managers
         
         void Awake()
         {
-            CreateCards();
             _firstCardControllers = new Queue<CardController>();
-        }
-
-        void Start()
-        {
-            _playerPlayCount = 0;
-            _currentCombo = _comboStart;
         }
 
         [Button]
         public void CreateCards()
         {
+            _playerPlayCount = 0;
+            _currentCombo = _comboStart;
             CleanCards();
             int maxCount = _xLoopCount * _yLoopCount;
             _cards = new List<CardController>(maxCount);

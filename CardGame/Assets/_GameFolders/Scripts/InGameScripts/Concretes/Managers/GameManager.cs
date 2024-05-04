@@ -19,6 +19,8 @@ namespace CardGame.Managers
         ISaveLoadService _saveLoadService;
 
         public event System.Action<int,int> OnGameEnded;
+        public event System.Action OnGameStarted;
+        public event System.Action OnReturnMenu;
 
         [Zenject.Inject]
         void Constructor(IPlayerController playerController, ICardService cardService, ISaveLoadService saveLoadService)
@@ -32,7 +34,6 @@ namespace CardGame.Managers
                 _bestScore = model.BestScore;
             }
             
-            GameStart();
             _cardService.OnGameOvered += HandleOnGameOvered;
         }
 
@@ -44,9 +45,17 @@ namespace CardGame.Managers
         [Button]
         public async void GameStart()
         {
+            OnGameStarted?.Invoke();
+            _cardService.CreateCards();
             await UniTask.Delay(_delayMillisecond);
             await _cardService.FlipAllCard();
             _playerController.PlayerCanPlay();
+        }
+
+        public void ReturnMenu()
+        {
+            _playerController.PlayerCantPlay();
+            OnReturnMenu?.Invoke();
         }
         
         void HandleOnGameOvered()

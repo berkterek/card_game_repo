@@ -5,6 +5,7 @@ namespace CardGame.Abstracts.Managers
 {
     public interface ICardService
     {
+        void CreateCards();
         UniTask FlipAllCard();
         void MatchCards(ICardController cardController);
         event System.Action<int> OnSuccessMatching;

@@ -51,6 +51,7 @@ namespace CardGame.Controllers
         public void PlayerCanPlay()
         {
             _canPlay = true;
+            _totalScore = 0;
         }
         
         public void PlayerCantPlay()

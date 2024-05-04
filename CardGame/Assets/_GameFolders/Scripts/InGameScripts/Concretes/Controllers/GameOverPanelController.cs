@@ -23,11 +23,13 @@ namespace CardGame.Controllers
         {
             _gameService = gameService;
             _gameService.OnGameEnded += HandleOnGameEnded;
+            _gameService.OnGameStarted += HandleOnGameStarted;
         }
 
         void OnDisable()
         {
             _gameService.OnGameEnded -= HandleOnGameEnded;
+            _gameService.OnGameStarted -= HandleOnGameStarted;
         }
 
         void HandleOnGameEnded(int currentScore, int bestScore)
@@ -35,6 +37,13 @@ namespace CardGame.Controllers
             _currentScoreText.SetText(currentScore.ToString());
             _bestScoreText.SetText(bestScore.ToString());
             SetCanvasGroupValues(1f, true);
+        }
+        
+        void HandleOnGameStarted()
+        {
+            _currentScoreText.SetText("0");
+            _bestScoreText.SetText("0");
+            SetCanvasGroupValues(0f, false);
         }
 
         void SetCanvasGroupValues(float alpha, bool value)
