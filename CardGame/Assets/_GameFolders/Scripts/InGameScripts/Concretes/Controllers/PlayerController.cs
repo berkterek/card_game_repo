@@ -1,18 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
+using CardGame.Abstracts.Controllers;
+using CardGame.Abstracts.Inputs;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+namespace CardGame.Controllers
 {
-    // Start is called before the first frame update
-    void Start()
+    public class PlayerController : MonoBehaviour, IPlayerController
     {
-        
-    }
+        public IInputReader InputReader { get; private set; }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        [Zenject.Inject]
+        private void Constructor(IInputReader inputReader)
+        {
+            InputReader = inputReader;
+        }
     }
 }
