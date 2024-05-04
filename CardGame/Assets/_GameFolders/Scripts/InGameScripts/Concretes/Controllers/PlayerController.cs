@@ -1,4 +1,5 @@
 using CardGame.Abstracts.Controllers;
+using CardGame.Abstracts.Handlers;
 using CardGame.Abstracts.Inputs;
 using UnityEngine;
 
@@ -6,12 +7,27 @@ namespace CardGame.Controllers
 {
     public class PlayerController : MonoBehaviour, IPlayerController
     {
-        public IInputReader InputReader { get; private set; }
+        public IWorldPositionHandler WorldPositionHandler { get; set; }
+        public IInputReader InputReader { get; set; }
+        public Camera Camera { get; private set; }
 
         [Zenject.Inject]
-        private void Constructor(IInputReader inputReader)
+        void Constructor(IInputReader inputReader, IWorldPositionHandler worldPositionHandler)
         {
             InputReader = inputReader;
+            WorldPositionHandler = worldPositionHandler;
+        }
+
+        void Awake()
+        {
+            Camera = Camera.main;
+        }
+
+        public void Update()
+        {
+            if (!InputReader.IsTouch) return;
+
+            WorldPositionHandler.ExecuteGetWorldPosition();
         }
     }
 }
