@@ -24,12 +24,12 @@ namespace CardGame.Managers
         [SerializeField] float _yOffset;
         [SerializeField, ReadOnly] List<CardController> _cards;
 
-        CardController _firstCardController;
-        CardController _secondCardController;
+        Queue<CardController> _firstCardControllers;
 
         void Awake()
         {
             CreateCards();
+            _firstCardControllers = new Queue<CardController>();
         }
 
         [Button]
@@ -98,34 +98,39 @@ namespace CardGame.Managers
 
         public async void MatchCards(ICardController cardController)
         {
-            if (_firstCardController == null)
+            if (_firstCardControllers.Count <= 0)
             {
-                _firstCardController = cardController as CardController;
-                _firstCardController.RotateCard();
+                _firstCardControllers.Enqueue(cardController as CardController);
+                cardController.RotateCard();
             }
             else
             {
-                _secondCardController = cardController as CardController;
-                _secondCardController.RotateCard();
-                await UniTask.Delay(1000);
+                var secondCardController = cardController as CardController;
+                secondCardController.RotateCard();
+                var firstCard = _firstCardControllers.Dequeue();
 
-                if (_firstCardController.CardDataContainer.CardType == _secondCardController.CardDataContainer.CardType)
+                if (firstCard.CardDataContainer.CardType == secondCardController.CardDataContainer.CardType)
                 {
-                    _cards.Remove(_firstCardController);
-                    _cards.Remove(_secondCardController);
-                    Destroy(_firstCardController.gameObject);
-                    Destroy(_secondCardController.gameObject);
+                    _cards.Remove(firstCard);
+                    _cards.Remove(secondCardController);
+                    await UniTask.Delay(1000);
+                    Destroy(firstCard.gameObject);
+                    Destroy(secondCardController.gameObject);
                 }
                 else
                 {
-                    _firstCardController.RotateCard();
-                    _secondCardController.RotateCard();
+                    await UniTask.Delay(1000);
+                    firstCard.RotateCard();
+                    secondCardController.RotateCard();
                 }
-
-                _firstCardController = null;
-                _secondCardController = null;
             }
         }
+    }
+
+    public struct CardHolder
+    {
+        public CardController CardController1;
+        public CardController CardController2;
     }
 
     [System.Serializable]
