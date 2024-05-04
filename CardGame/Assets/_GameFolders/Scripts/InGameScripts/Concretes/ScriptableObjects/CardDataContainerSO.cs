@@ -1,4 +1,5 @@
 using CardGame.Abstracts.DataContainers;
+using CardGame.Abstracts.Stats;
 using CardGame.Enums;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -16,12 +17,16 @@ namespace CardGame.ScriptableObjects
         [BoxGroup("Card Details"), LabelText("Card Score")]
         [SerializeField] private int _cardScore;
         
+        [BoxGroup("Card Details"), LabelText("Card Stats")]
+        [SerializeField,Required] private CardStatsSO _cardStats;
+        
         [BoxGroup("Card Details"), LabelText("Card Sprite"), PreviewField(75, ObjectFieldAlignment.Left)]
         [SerializeField] private Sprite _cardSprite;
 
         public CardType CardType => _cardType;
         public Sprite CardSprite => _cardSprite;
         public int CardScore => _cardScore;
+        public ICardStats CardStats => _cardStats;
 
         public void SetEditorBuild(Sprite sprite, CardType cardType, int score = 1)
         {

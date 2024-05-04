@@ -34,18 +34,18 @@ namespace CardGame.Controllers
 
             if (_isFront)
             {
-                _transform.DORotate(new Vector3(0f, 90f, 0f), 0.25f).onComplete += () =>
+                _transform.DORotate(new Vector3(0f, 90f, 0f), CardDataContainer.CardStats.RotationDuration).onComplete += () =>
                 {
                     _bodySpriteRenderer.sprite = CardDataContainer.CardSprite;
-                    _transform.DORotate(new Vector3(0f, 180f, 0f), 0.25f);
+                    _transform.DORotate(new Vector3(0f, 180f, 0f), CardDataContainer.CardStats.RotationDuration);
                 };
             }
             else
             {
-                _transform.DORotate(new Vector3(0f, 90f, 0f), 0.25f).onComplete += () =>
+                _transform.DORotate(new Vector3(0f, 90f, 0f), CardDataContainer.CardStats.RotationDuration).onComplete += () =>
                 {
                     _bodySpriteRenderer.sprite = null;
-                    _transform.DORotate(new Vector3(0f, 0f, 0f), 0.25f);
+                    _transform.DORotate(new Vector3(0f, 0f, 0f), CardDataContainer.CardStats.RotationDuration);
                 };
             }
         } 
