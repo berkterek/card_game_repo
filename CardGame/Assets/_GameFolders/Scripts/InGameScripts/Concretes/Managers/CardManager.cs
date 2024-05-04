@@ -1,12 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
+using CardGame.Abstracts.Controllers;
 using CardGame.Abstracts.DataContainers;
+using CardGame.Abstracts.Managers;
 using CardGame.Controllers;
 using CardGame.Enums;
 using CardGame.Helpers;
 using CardGame.ScriptableObjects;
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace CardGame.Managers
 {
@@ -20,8 +24,16 @@ namespace CardGame.Managers
         [SerializeField] float _yOffset;
         [SerializeField, ReadOnly] List<CardController> _cards;
 
+        CardController _firstCardController;
+        CardController _secondCardController;
+
+        void Awake()
+        {
+            CreateCards();
+        }
+
         [Button]
-        private void CreateCards()
+        public void CreateCards()
         {
             CleanCards();
             int maxCount = _xLoopCount * _yLoopCount;
@@ -58,7 +70,7 @@ namespace CardGame.Managers
         }
 
         [Button]
-        private void CleanCards()
+        void CleanCards()
         {
             _cards = null;
             while (transform.childCount > 0)
@@ -67,11 +79,51 @@ namespace CardGame.Managers
             }
         }
 
-        private void AddList(ICardDataContainer[] dataContainers, List<ICardDataContainer> list)
+        void AddList(ICardDataContainer[] dataContainers, List<ICardDataContainer> list)
         {
             foreach (var cardDataContainer in dataContainers)
             {
                 list.Add(cardDataContainer);
+            }
+        }
+
+        public async UniTask FlipAllCard()
+        {
+            foreach (var cardController in _cards)
+            {
+                cardController.RotateCard();
+                await UniTask.Delay(100);
+            }
+        }
+
+        public async void MatchCards(ICardController cardController)
+        {
+            if (_firstCardController == null)
+            {
+                _firstCardController = cardController as CardController;
+                _firstCardController.RotateCard();
+            }
+            else
+            {
+                _secondCardController = cardController as CardController;
+                _secondCardController.RotateCard();
+                await UniTask.Delay(1000);
+
+                if (_firstCardController.CardDataContainer.CardType == _secondCardController.CardDataContainer.CardType)
+                {
+                    _cards.Remove(_firstCardController);
+                    _cards.Remove(_secondCardController);
+                    Destroy(_firstCardController.gameObject);
+                    Destroy(_secondCardController.gameObject);
+                }
+                else
+                {
+                    _firstCardController.RotateCard();
+                    _secondCardController.RotateCard();
+                }
+
+                _firstCardController = null;
+                _secondCardController = null;
             }
         }
     }
@@ -108,9 +160,5 @@ namespace CardGame.Managers
 
             return tempList.ToArray();
         }
-    }
-
-    public interface ICardService
-    {
     }
 }

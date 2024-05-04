@@ -1,6 +1,7 @@
 using CardGame.Abstracts.Controllers;
 using CardGame.Abstracts.DataContainers;
 using CardGame.Helpers;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace CardGame.Controllers
         [SerializeField] bool _isFront = true;
 
         public ICardDataContainer CardDataContainer { get; private set; }
+        public bool IsFront => _isFront;
         public Transform Transform => _transform;
 
         void OnValidate()
@@ -28,7 +30,7 @@ namespace CardGame.Controllers
         }
 
         [Button]
-        private void RotateCard()
+        public void RotateCard()
         {
             _isFront = !_isFront;
 

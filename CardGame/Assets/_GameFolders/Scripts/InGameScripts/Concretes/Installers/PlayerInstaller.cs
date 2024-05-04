@@ -16,5 +16,5 @@ namespace CardGame.Installers
             Container.Bind<IPlayerController>().To<PlayerController>().FromComponentInHierarchy().AsSingle().NonLazy();
             Container.Bind<IWorldPositionHandler>().To<WorldPositionWithPhysicsHandler>().AsSingle().NonLazy();
         }
-    }    
+    }
 }

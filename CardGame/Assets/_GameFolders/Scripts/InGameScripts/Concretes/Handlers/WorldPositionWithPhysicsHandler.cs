@@ -14,11 +14,23 @@ namespace CardGame.Handlers
             _playerController = playerController;
         }
         
-        public void ExecuteGetWorldPosition()
+        public ICardController ExecuteGetWorldPosition()
         {
             Vector3 worldPosition = _playerController.Camera.ScreenToWorldPoint(_playerController.InputReader.TouchPosition);
             worldPosition = new Vector3(worldPosition.x, worldPosition.y, 0f);
-            Debug.Log(worldPosition);
+
+            var raycastHit = Physics2D.Raycast(worldPosition, Vector2.zero, 1f);
+            if(raycastHit.collider != null)
+            {
+                if (raycastHit.collider.TryGetComponent(out ICardController cardController))
+                {
+                    if (cardController.IsFront) return null;
+                    
+                    return cardController;
+                }
+            }
+
+            return null;
         }
     }
 }

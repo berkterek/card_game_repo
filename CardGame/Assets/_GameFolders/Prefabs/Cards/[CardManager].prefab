@@ -121,3 +121,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: cf483dc75d353463587bcb5718e0a037, type: 2}
     - {fileID: 11400000, guid: dcda92df58ddb4860a04e0703e63e75b, type: 2}
     - {fileID: 11400000, guid: f02ca61e46bf1478391820e3e1159a9c, type: 2}
+  _xLoopCount: 4
+  _yLoopCount: 4
+  _xOffset: 2.5
+  _yOffset: 2.5
+  _cards: []

@@ -10,5 +10,6 @@ namespace CardGame.Abstracts.Controllers
         IInputReader InputReader { get; set; }
         Camera Camera { get; }
         void Update();
+        void PlayerCanPlay();
     }
 }
