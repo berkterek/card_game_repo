@@ -1,0 +1,18 @@
+{
+    "name": "CardGameEditor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:79ef3feda317441ce958a8b399648e19"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
