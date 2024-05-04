@@ -7,5 +7,7 @@ namespace CardGame.Abstracts.Managers
     {
         UniTask FlipAllCard();
         void MatchCards(ICardController cardController);
+        event System.Action<int> OnSuccessMatching;
+        event System.Action<int> OnPlayerPlayCount;
     }
 }

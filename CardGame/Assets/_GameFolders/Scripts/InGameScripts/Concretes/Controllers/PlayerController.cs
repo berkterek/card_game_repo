@@ -8,6 +8,7 @@ namespace CardGame.Controllers
 {
     public class PlayerController : MonoBehaviour, IPlayerController
     {
+        [SerializeField] int _totalScore;
         [SerializeField] bool _canPlay = false;
 
         ICardService _cardService;
@@ -15,6 +16,7 @@ namespace CardGame.Controllers
         public IWorldPositionHandler WorldPositionHandler { get; set; }
         public IInputReader InputReader { get; set; }
         public Camera Camera { get; private set; }
+        public event System.Action<int> OnSuccessMatching;
 
         [Zenject.Inject]
         void Constructor(IInputReader inputReader, IWorldPositionHandler worldPositionHandler, ICardService cardService)
@@ -22,11 +24,17 @@ namespace CardGame.Controllers
             InputReader = inputReader;
             WorldPositionHandler = worldPositionHandler;
             _cardService = cardService;
+            _cardService.OnSuccessMatching += HandleOnSuccessMatching;
         }
 
         void Awake()
         {
             Camera = Camera.main;
+        }
+
+        void OnDisable()
+        {
+            _cardService.OnSuccessMatching -= HandleOnSuccessMatching;
         }
 
         public void Update()
@@ -42,6 +50,12 @@ namespace CardGame.Controllers
         public void PlayerCanPlay()
         {
             _canPlay = true;
+        }
+        
+        void HandleOnSuccessMatching(int score)
+        {
+            _totalScore += score;
+            OnSuccessMatching?.Invoke(_totalScore);
         }
     }
 }

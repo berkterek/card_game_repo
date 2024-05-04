@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CardGame.Abstracts.Controllers;
@@ -22,14 +23,23 @@ namespace CardGame.Managers
         [SerializeField] int _yLoopCount = 4;
         [SerializeField] float _xOffset;
         [SerializeField] float _yOffset;
+        [SerializeField] int _playerPlayCount;
         [SerializeField, ReadOnly] List<CardController> _cards;
 
+        public event System.Action<int> OnSuccessMatching;
+        public event System.Action<int> OnPlayerPlayCount;
+ 
         Queue<CardController> _firstCardControllers;
 
         void Awake()
         {
             CreateCards();
             _firstCardControllers = new Queue<CardController>();
+        }
+
+        void Start()
+        {
+            _playerPlayCount = 0;
         }
 
         [Button]
@@ -114,8 +124,10 @@ namespace CardGame.Managers
                     _cards.Remove(firstCard);
                     _cards.Remove(secondCardController);
                     await UniTask.Delay(1000);
+                    OnSuccessMatching?.Invoke(firstCard.CardDataContainer.CardScore);
                     Destroy(firstCard.gameObject);
                     Destroy(secondCardController.gameObject);
+                    
                 }
                 else
                 {
@@ -123,6 +135,9 @@ namespace CardGame.Managers
                     firstCard.RotateCard();
                     secondCardController.RotateCard();
                 }
+
+                _playerPlayCount++;
+                OnPlayerPlayCount?.Invoke(_playerPlayCount);
             }
         }
     }
